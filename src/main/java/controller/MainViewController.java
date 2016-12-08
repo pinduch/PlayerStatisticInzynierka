@@ -1,5 +1,12 @@
 package controller;
 
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.model.relational.Database;
 import utils.HibernateUtil;
@@ -51,6 +58,15 @@ public class MainViewController {
     @FXML
     private Label ipAddressLabel;
 
+    @FXML
+    private ComboBox cmbTrack;
+
+    @FXML
+    private ComboBox cmbPlayer;
+
+    @FXML
+    private Button btnSearch;
+
 //----------------------- Other variables --------------------------------
     public TCPServer tcpServer;
     public DatabaseController database = new DatabaseController();
@@ -69,55 +85,48 @@ public class MainViewController {
         tblDate.setCellValueFactory(new PropertyValueFactory<Rank, String>("date"));
         tblDate.prefWidthProperty().bind(rankTbl.widthProperty().multiply(0.30));
 
-        try {
-            ipAddressLabel.setText(Inet4Address.getLocalHost().getHostAddress());
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        ElementInitializer.setIpAddress(ipAddressLabel);
+        ElementInitializer.setComboBoxItems(cmbTrack, database.getTrackNames());
+        ElementInitializer.setComboBoxItems(cmbPlayer, database.getPlayerNames());
 
+        setRankTable(database.getAllResults());
+
+// TODO:
+//      przy tym się pierdoli.... nie wiem jak naprawić ;/
+//        cmbTrack.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+//            searchCombobox(newValue);
+//        });
 
   //      database.putDataToDB();
 
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        session.beginTransaction();
-
-        Query query = session.createQuery("select t.trackName, r.result, r.date, p.playerName " +
-                "from Result as r " +
-                "inner join r.track as t " +
-                "inner join r.player as p " +
-                "order by t.trackName");
-
-        List<Object[]> recordList = query.list();
-
-        for (Object[] result : recordList) {
-            System.out.print(String.valueOf(result[0]) + " - ");
-            System.out.print(String.valueOf(result[1]) + " - ");
-            System.out.print(String.valueOf(result[2]) + " - ");
-            System.out.println(String.valueOf(result[3]));
-        }
-
-        session.getTransaction().commit();
-
-
-        ObservableList<Rank> data = FXCollections.observableArrayList();
-//        for (Object[] result : database.getAllResults()){
-        for (Object[] result : database.getResultsByTrack(1)){
-            Rank rank = new Rank(
-                    "1",
-                    String.valueOf(result[0]),
-                    String.valueOf(result[1]),
-                    changeDate(String.valueOf(result[2]), "HH:mm '/' dd.MM.yy")
-            );
-            data.add(rank);
-        }
-
-
-        rankTbl.setItems(data);
 
     }
 
 
+    /**
+     * Method which get all input data from search criteria and show in table results of this criteria.
+     */
+    public void searchResults(){
+        Object playerName = cmbPlayer.getSelectionModel().getSelectedItem();
+        Object trackName = cmbTrack.getSelectionModel().getSelectedItem();
 
+        String player = "";
+        String track = "";
+
+        if (playerName != null) player = playerName.toString();
+        if (trackName != null) track = trackName.toString();
+
+        setRankTable(database.getResultsFromSearchCriteria(player, track));
+    }
+
+
+    /**
+     * Method to change date format which is show in rank table
+     *
+     * @param oldDate date in String
+     * @param dateFormat new date format
+     * @return
+     */
     public String changeDate(String oldDate, String dateFormat){
         String newDate = null;
         try {
@@ -144,6 +153,40 @@ public class MainViewController {
 
     }
 
+    /**
+     * Method to set data in rank table.
+     *
+     * @param resultList List of Objects received from database
+     */
+    public void setRankTable(List<Object[]> resultList){
+        Integer i = 1;
+        ObservableList<Rank> data = FXCollections.observableArrayList();
+        for (Object[] result : resultList){
+            Rank rank = new Rank(
+                    i.toString(),
+                    String.valueOf(result[0]),
+                    String.valueOf(result[1]),
+                    changeDate(String.valueOf(result[2]), "HH:mm '/' dd.MM.yy")
+            );
+            data.add(rank);
+            i++;
+        }
+
+        rankTbl.setItems(data);
+    }
+
+    // póki co to nie działa leci exception IndexOutOfBound jeśli zmienię zawartość observableList i coś wybiorę
+    // jak to dodałęm poprzez metode tak jak teraz to po wyborze jakiejś wartości wgl nie mogę jej zmienić....
+    public void searchCombobox(String value){
+        ObservableList<String> tracksList = FXCollections.observableArrayList();
+
+        for (Object result : database.getTrackNamesContainsText(value.trim())) {
+            tracksList.add(String.valueOf(result));
+        }
+
+        cmbTrack.setItems(tracksList);
+        cmbTrack.show();
+    }
 
 
 }

@@ -52,16 +52,7 @@
           <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Game Types" textFill="RED" GridPane.rowIndex="1">
-               <font>
-                  <Font size="17.0" />
-               </font>
-            </Label>
-            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button" GridPane.rowIndex="4" />
-            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button" GridPane.rowIndex="3" />
-            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button" GridPane.rowIndex="5" />
-            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button" GridPane.rowIndex="6" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Search" GridPane.rowIndex="7" />
             <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="No devices connected" textFill="RED" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="BOTTOM">
                <font>
                   <Font size="13.0" />
@@ -93,12 +84,16 @@
                   <Font size="16.0" />
                </font>
             </Label>
+            <ComboBox maxWidth="1.7976931348623157E308" promptText="Track" GridPane.rowIndex="2" />
+            <ComboBox maxWidth="1.7976931348623157E308" promptText="Player" GridPane.rowIndex="3" />
+            <DatePicker GridPane.rowIndex="5" />
+            <Label text="Label" GridPane.rowIndex="4" />
          </children>
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
          <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" />
+            <Insets bottom="10.0" left="20.0" right="20.0" />
          </padding>
       </GridPane>
    </center>
