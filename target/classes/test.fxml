@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainViewController">
+   <children>
+      <MenuBar maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <menus>
+            <Menu mnemonicParsing="false" text="File">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="Close" />
+               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Edit">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="Delete" />
+               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Help">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="About" />
+               </items>
+            </Menu>
+         </menus>
+      </MenuBar>
+      <ComboBox layoutX="32.0" layoutY="152.0" prefHeight="25.0" prefWidth="136.0" promptText="Track" AnchorPane.leftAnchor="32.0" />
+      <ComboBox layoutX="32.0" layoutY="186.0" prefHeight="25.0" prefWidth="136.0" promptText="Player" AnchorPane.leftAnchor="32.0" />
+      <DatePicker layoutX="32.0" layoutY="240.0" prefHeight="25.0" prefWidth="136.0" AnchorPane.leftAnchor="32.0" />
+      <Label layoutX="36.0" layoutY="223.0" text="Date From:" AnchorPane.leftAnchor="32.0" />
+      <TableView fx:id="rankTbl" layoutX="203.0" layoutY="143.0" prefHeight="290.0" prefWidth="394.0" AnchorPane.bottomAnchor="167.0" AnchorPane.leftAnchor="203.0" AnchorPane.rightAnchor="203.0" AnchorPane.topAnchor="143.0">
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+         <columns>
+            <TableColumn fx:id="tblId" resizable="false" style="-fx-alignment: CENTER;" text="ID" />
+            <TableColumn fx:id="tblName" prefWidth="93.0" resizable="false" text="NAME" />
+            <TableColumn fx:id="tblResult" prefWidth="98.0" resizable="false" text="RESULT" />
+            <TableColumn fx:id="tblDate" minWidth="0.0" prefWidth="122.0" resizable="false" text="DATE" />
+         </columns>
+      </TableView>
+      <Label alignment="CENTER" layoutX="242.0" layoutY="81.0" maxWidth="1.7976931348623157E308" prefHeight="46.0" prefWidth="316.0" text="Rank" textFill="#4400ff" AnchorPane.leftAnchor="242.0" AnchorPane.rightAnchor="242.0" AnchorPane.topAnchor="81.0">
+         <font>
+            <Font name="System Bold" size="34.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="653.0" layoutY="172.0" maxWidth="1.7976931348623157E308" text="IP Address:" textFill="#000dff" AnchorPane.rightAnchor="54.0">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+      <Button layoutX="39.0" layoutY="394.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="25.0" prefWidth="93.0" text="Search" AnchorPane.leftAnchor="32.0" />
+      <Label fx:id="ipAddressLabel" alignment="CENTER" layoutX="677.0" layoutY="208.0" maxWidth="1.7976931348623157E308" text="0.0.0.0" AnchorPane.rightAnchor="78.0">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER_RIGHT" layoutX="619.0" layoutY="548.0" maxWidth="1.7976931348623157E308" text="No devices connected" textFill="RED" AnchorPane.bottomAnchor="33.0" AnchorPane.rightAnchor="54.0">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
+      <Label layoutX="36.0" layoutY="279.0" text="Date To:" AnchorPane.leftAnchor="32.0" />
+      <DatePicker layoutX="32.0" layoutY="296.0" prefHeight="25.0" prefWidth="136.0" AnchorPane.leftAnchor="32.0" />
+      <CheckBox layoutX="32.0" layoutY="334.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="136.0" text="Show All Results" AnchorPane.leftAnchor="32.0" />
+   </children>
+</AnchorPane>
