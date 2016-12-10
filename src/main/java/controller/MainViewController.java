@@ -1,47 +1,31 @@
 package controller;
 
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.model.relational.Database;
-import utils.HibernateUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import model.Player;
+import model.MainModel;
 import model.Rank;
-import model.Result;
-import model.Track;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Mateusz on 14.11.2016.
  */
 public class MainViewController {
 
-//------------------------  JavaFX elements -------------------------------
-    @FXML
-    private Button btnSend;
+    private MainModel model;
 
     @FXML
     private TextField txtMessage;
+
+    @FXML
+    private Button btnSend;
 
     @FXML
     private Label txtMainText;
@@ -59,23 +43,28 @@ public class MainViewController {
     private Label ipAddressLabel;
 
     @FXML
-    private ComboBox cmbTrack;
+    private ComboBox cmbTrackNames;
 
     @FXML
     private ComboBox cmbPlayer;
 
     @FXML
+    private ListView lstPlayerNames;
+
+    @FXML
     private Button btnSearch;
 
-//----------------------- Other variables --------------------------------
     public TCPServer tcpServer;
     public DatabaseController database = new DatabaseController();
 
-
+    public MainViewController() {
+        model = new MainModel();
+    }
 
     @FXML
     private void initialize()
     {
+
         tblId.setCellValueFactory(new PropertyValueFactory<Rank, String>("id"));
         tblId.prefWidthProperty().bind(rankTbl.widthProperty().multiply(0.10));
         tblName.setCellValueFactory(new PropertyValueFactory<Rank, String>("name"));
@@ -85,21 +74,30 @@ public class MainViewController {
         tblDate.setCellValueFactory(new PropertyValueFactory<Rank, String>("date"));
         tblDate.prefWidthProperty().bind(rankTbl.widthProperty().multiply(0.30));
 
+        lstPlayerNames.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
         ElementInitializer.setIpAddress(ipAddressLabel);
-        ElementInitializer.setComboBoxItems(cmbTrack, database.getTrackNames());
-        ElementInitializer.setComboBoxItems(cmbPlayer, database.getPlayerNames());
+        cmbTrackNames.setItems(model.getCmbTrackList());
+        lstPlayerNames.setItems(model.getLstPlayerList());
+
+
 
         setRankTable(database.getAllResults());
 
-// TODO:
-//      przy tym się pierdoli.... nie wiem jak naprawić ;/
-//        cmbTrack.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+// TODO: przy tym się pierdoli.... nie wiem jak naprawić ;/
+//        cmbTrackNames.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
 //            searchCombobox(newValue);
 //        });
+
 
   //      database.putDataToDB();
 
 
+        try {
+            startServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -107,8 +105,8 @@ public class MainViewController {
      * Method which get all input data from search criteria and show in table results of this criteria.
      */
     public void searchResults(){
-        Object playerName = cmbPlayer.getSelectionModel().getSelectedItem();
-        Object trackName = cmbTrack.getSelectionModel().getSelectedItem();
+        Object playerName = lstPlayerNames.getSelectionModel().getSelectedItem();
+        Object trackName = cmbTrackNames.getSelectionModel().getSelectedItem();
 
         String player = "";
         String track = "";
@@ -117,6 +115,7 @@ public class MainViewController {
         if (trackName != null) track = trackName.toString();
 
         setRankTable(database.getResultsFromSearchCriteria(player, track));
+
     }
 
 
@@ -141,7 +140,7 @@ public class MainViewController {
     public void startServer() throws IOException {
 
         tcpServer = new TCPServer(txtArea);
-        txtMainText.setText("Try to connect to server");
+//        txtMainText.setText("Try to connect to server");
         tcpServer.start();
 
     }
@@ -180,12 +179,15 @@ public class MainViewController {
     public void searchCombobox(String value){
         ObservableList<String> tracksList = FXCollections.observableArrayList();
 
+//        cmbTrackNames.get
+
         for (Object result : database.getTrackNamesContainsText(value.trim())) {
             tracksList.add(String.valueOf(result));
         }
 
-        cmbTrack.setItems(tracksList);
-        cmbTrack.show();
+        cmbTrackNames.setItems(tracksList);
+
+     //   cmbTrackNames.show();
     }
 
 

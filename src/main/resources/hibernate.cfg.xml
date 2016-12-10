@@ -11,8 +11,8 @@
         <property name="hibernate.connection.password">root</property>
         <property name="hbm2ddl.auto">update</property>
         <property name="show_sql">true</property>
-        <mapping class="model.Player"></mapping>
-        <mapping class="model.Result"></mapping>
-        <mapping class="model.Track"></mapping>
+        <mapping class="entity.Player"></mapping>
+        <mapping class="entity.Result"></mapping>
+        <mapping class="entity.Track"></mapping>
     </session-factory>
 </hibernate-configuration>

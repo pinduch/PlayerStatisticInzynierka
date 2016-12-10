@@ -2,11 +2,11 @@
  * Created by Mateusz on 14.11.2016.
  */
 
+import controller.TCPServer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import utils.HibernateUtil;
 
@@ -34,11 +34,12 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        primaryStage.setOnCloseRequest(e -> closeSession());
+        primaryStage.setOnCloseRequest(e -> closeOpenedConnections());
 
     }
 
-    private void closeSession(){
+    private void closeOpenedConnections(){
         HibernateUtil.shutdown();
+        TCPServer.
     }
 }

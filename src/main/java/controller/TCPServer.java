@@ -79,7 +79,7 @@ public class TCPServer extends Thread {
                         clientResponse = in.readLine();
 
                         if (clientResponse != null) {
-                            txtArea.setText( clientResponse );
+                            System.out.println( clientResponse );;
                         }
 
                         if (clientResponse.equals("Application is closed")){
@@ -108,13 +108,17 @@ public class TCPServer extends Thread {
     /**
      * Method to close server.
      */
-    public void closeConnection(){
+    private void closeConnection(){
         try {
             listener.close();
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void closeConnectionIfNotClosed(){
+        if (!socket.isClosed())
     }
 
 

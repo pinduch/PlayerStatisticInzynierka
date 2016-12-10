@@ -1,18 +1,14 @@
 package controller;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import model.Player;
-import model.Rank;
-import model.Result;
-import model.Track;
+import entity.Player;
+import entity.Result;
+import entity.Track;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import utils.HibernateUtil;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by Mateusz on 01.12.2016.
