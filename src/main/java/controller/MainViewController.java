@@ -59,6 +59,7 @@ public class MainViewController {
 
     public MainViewController() {
         model = new MainModel();
+        tcpServer = TCPServer.getInstance();
     }
 
     @FXML
@@ -139,7 +140,7 @@ public class MainViewController {
 
     public void startServer() throws IOException {
 
-        tcpServer = new TCPServer(txtArea);
+//        tcpServer = new TCPServer(txtArea);
 //        txtMainText.setText("Try to connect to server");
         tcpServer.start();
 

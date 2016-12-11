@@ -40,6 +40,6 @@ public class Main extends Application {
 
     private void closeOpenedConnections(){
         HibernateUtil.shutdown();
-        TCPServer.
+        TCPServer.getInstance().closeConnection();
     }
 }

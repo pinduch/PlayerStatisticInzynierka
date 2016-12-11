@@ -12,7 +12,7 @@ import java.net.Socket;
 /**
  * Created by Mateusz on 22.11.2016.
  *
- * TCP Server. This class allows to connect with aplication by socket. Client sent information or data to this server
+ * TCP Server. This class allows to connect with application by socket. Client sent information or data to this server
  * and then server will send response to client.
  */
 
@@ -25,15 +25,18 @@ public class TCPServer extends Thread {
     private Socket socket;
     private TextArea txtArea;
 
-    /**
-     * Constructor of TCPServer class
-     *
-     * @param txtArea - JavaFX text element, for now it shows data from client.
-     */
-    public TCPServer(TextArea txtArea) {
-        this.txtArea = txtArea;
+    private static TCPServer instance = null;
+
+    public static TCPServer getInstance(){
+        if (instance == null){
+            instance = new TCPServer();
+        }
+        return instance;
     }
 
+    protected TCPServer(){
+
+    }
 
     @Override
     public void run() {
@@ -54,7 +57,7 @@ public class TCPServer extends Thread {
         listener = new ServerSocket(9090);
         try {
             socket = listener.accept();
-
+            System.out.println("CONNECTED");
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -76,16 +79,16 @@ public class TCPServer extends Thread {
             public void run() {
                 while (true) {
                     try {
-                        clientResponse = in.readLine();
+                            clientResponse = in.readLine();
 
-                        if (clientResponse != null) {
-                            System.out.println( clientResponse );;
-                        }
+                            if (clientResponse != null) {
+                                System.out.println(clientResponse);
+                            }
 
-                        if (clientResponse.equals("Application is closed")){
-                            closeConnection();
-                            break;
-                        }
+                            if (clientResponse.equals("Application is closed")) {
+                                closeConnection();
+                                break;
+                            }
 
                     } catch (IOException e){
                         e.printStackTrace();
@@ -108,17 +111,15 @@ public class TCPServer extends Thread {
     /**
      * Method to close server.
      */
-    private void closeConnection(){
+    public void closeConnection(){
         try {
             listener.close();
-            socket.close();
+            if (socket != null) {
+                socket.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void closeConnectionIfNotClosed(){
-        if (!socket.isClosed())
     }
 
 
