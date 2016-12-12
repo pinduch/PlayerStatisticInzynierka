@@ -3,17 +3,17 @@ package model;
 /**
  * Created by Mateusz on 30.11.2016.
  */
-public class Rank {
+public class TableRankData {
 
     private String id;
     private String name;
     private String result;
     private String date;
 
-    public Rank(){
+    public TableRankData(){
     }
 
-    public Rank(String id, String name, String result, String date){
+    public TableRankData(String id, String name, String result, String date){
         this.id = id;
         this.name = name;
         this.result = result;

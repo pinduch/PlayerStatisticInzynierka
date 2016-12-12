@@ -1,5 +1,6 @@
 package controller;
 
+import common.Constant;
 import entity.Player;
 import entity.Result;
 import entity.Track;
@@ -7,6 +8,10 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import utils.HibernateUtil;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -65,7 +70,8 @@ public class DatabaseController {
      */
     public List<Object[]> getPlayerNames(){
         String query =  "select p.playerName " +
-                "from Player as p";
+                "from Player as p " +
+                "order by p.playerName";
         return getResults(query);
     }
 
@@ -83,16 +89,35 @@ public class DatabaseController {
     }
 
     // TODO okiełznać jeszcze date do tej metody.
-    public List<Object[]> getResultsFromSearchCriteria(String playerName, String trackName){
+    public List<Object[]> getResultsFromSearchCriteria(String playerName, String trackName, LocalDate dateFrom, LocalDate dateTo){
+        Date dateFromParameter = null;
+        Date dateToParameter = null;
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            if (dateFrom != null)
+                dateFromParameter = format.parse(dateFrom + " 00:00:00");
+            if (dateTo != null)
+                dateToParameter = format.parse(dateTo + " 23:59:59");
+        } catch (ParseException ex){
+            ex.printStackTrace();
+        }
+
         String query =  "select p.playerName, r.result, r.date " +
                         "from Result as r " +
                         "inner join r.track as t " +
                         "inner join r.player as p " +
                         "where p.playerName like '%" + playerName + "%' " +
-                        "and t.trackName like '%" + trackName + "%' " +
-                        "order by r.result";
+                        "and t.trackName like '%" + trackName + "%' ";
+        if (dateFrom != null) {
+            query += "and r.date > :" + Constant.DATE_FROM + " ";
+        }
+        if (dateTo != null) {
+            query += "and r.date < :" + Constant.DATE_TO + " ";
+        }
+            query += "order by r.result";
 
-        return getResults(query);
+        return getResults(query, dateFromParameter, dateToParameter);
     }
 
     public void putDataToDB(){
@@ -143,6 +168,23 @@ public class DatabaseController {
         return recordsList;
     }
 
+    private List<Object[]> getResults(String query, Date dateFrom, Date dateTo){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+
+        Query sessionQuery = session.createQuery(query);
+        if (dateFrom != null ) {
+            sessionQuery.setParameter(Constant.DATE_FROM, dateFrom);
+        }
+        if (dateTo != null ) {
+            sessionQuery.setParameter(Constant.DATE_TO, dateTo);
+        }
+
+        recordsList = sessionQuery.list();
+
+        session.getTransaction().commit();
+        return recordsList;
+    }
 
 //    Session session = HibernateUtil.getSessionFactory().openSession();
 //        session.beginTransaction();

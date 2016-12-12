@@ -1,6 +1,8 @@
 package controller;
 
 import javafx.scene.control.TextArea;
+import model.ServerModel;
+import sun.rmi.runtime.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,6 +10,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Mateusz on 22.11.2016.
@@ -24,6 +28,7 @@ public class TCPServer extends Thread {
     private ServerSocket listener;
     private Socket socket;
     private TextArea txtArea;
+    private ServerModel serverModel;
 
     private static TCPServer instance = null;
 
@@ -35,7 +40,7 @@ public class TCPServer extends Thread {
     }
 
     protected TCPServer(){
-
+        serverModel = ServerModel.getInstance();
     }
 
     @Override
@@ -57,7 +62,9 @@ public class TCPServer extends Thread {
         listener = new ServerSocket(9090);
         try {
             socket = listener.accept();
+
             System.out.println("CONNECTED");
+
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -66,6 +73,7 @@ public class TCPServer extends Thread {
 
         } catch (IOException e) {
             e.printStackTrace();
+
         }
     }
 

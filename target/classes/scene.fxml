@@ -68,7 +68,7 @@
                   <Font size="19.0" />
                </font>
             </Label>
-            <TableView fx:id="rankTbl" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.rowSpan="6">
+            <TableView fx:id="tblRankData" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.rowSpan="6">
               <columns>
                 <TableColumn fx:id="tblId" resizable="false" style="-fx-alignment: CENTER;" text="ID" />
                 <TableColumn fx:id="tblName" resizable="false" text="NAME" />
