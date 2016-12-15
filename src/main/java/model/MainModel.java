@@ -95,6 +95,13 @@ public class MainModel {
         return newDate;
     }
 
+    public void setPlayerListContainsText(String text){
+        lstPlayerList.clear();
+        lstPlayerList.add(Constant.ALL_PLAYERS);
+        for (Object result : database.getPlayerNamesContainsText(text)){
+            lstPlayerList.add(String.valueOf(result));
+        }
+    }
 
     private void setTrackCombo() {
         cmbTrackList.add(Constant.ALL_TRACKS);

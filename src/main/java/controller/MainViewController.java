@@ -1,24 +1,16 @@
 package controller;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
 import model.MainModel;
+import model.ServerModel;
 import model.TableRankData;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
-import utils.HibernateUtil;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Mateusz on 14.11.2016.
@@ -49,14 +41,25 @@ public class MainViewController {
     private DatePicker calDateTo;
 
     @FXML
+    private TextField txtSearchPlayer;
+
+    @FXML
+    private Label labelConnection;
+
+    @FXML
     private TextField testTxtField;
 
     public TCPServer tcpServer;
+    public ServerModel serverModel;
 
 
+    /**
+     * Main constructor
+     */
     public MainViewController() {
         model = new MainModel();
         tcpServer = TCPServer.getInstance();
+        serverModel = ServerModel.getInstance();
     }
 
     @FXML
@@ -84,6 +87,15 @@ public class MainViewController {
 
   //      database.putDataToDB();
 
+        txtSearchPlayer.textProperty().addListener((observable, oldValue, newValue) -> model.setPlayerListContainsText(newValue));
+        testTxtField.textProperty().bindBidirectional(serverModel.getReceivedMessage());
+
+        serverModel.getReceivedMessage().addListener((observable, oldValue, newValue) -> {
+            if (newValue.equals("connect")) {
+                labelConnection.setText("Connected");
+                labelConnection.setTextFill(Color.GREEN);
+            }
+        });
 
         try {
             startServer();
@@ -108,16 +120,24 @@ public class MainViewController {
         model.setTableRankDataFromSearchCriteria(playerName, trackName,dateFrom, dateTo);
     }
 
-    public void clearSearchCrietria(){
+    /**
+     * Method to clear provided search criteria
+     */
+    public void clearSearchCriteria(){
         cmbTrackNames.getSelectionModel().selectFirst();
         lstPlayerNames.getSelectionModel().selectFirst();
         calDateFrom.getEditor().clear();
         calDateFrom.setValue(null);
         calDateTo.getEditor().clear();
         calDateTo.setValue(null);
+        txtSearchPlayer.clear();
     }
 
 
+    /**
+     * Method to start server TCP
+     * @throws IOException
+     */
     public void startServer() throws IOException {
 
 //        tcpServer = new TCPServer(txtArea);
@@ -131,6 +151,20 @@ public class MainViewController {
 //        tcpServer.sendMessage(txtMessage.getText());
 //        txtMessage.clear();
 
+    }
+
+    public class ServerRequestDispatcher extends Thread {
+
+        @Override
+        public void run() {
+            serverModel.getReceivedMessage().addListener((observable, oldValue, newValue) -> {
+                if (newValue.equals("connect")) {
+                    labelConnection.setText("Connected");
+                    labelConnection.setTextFill(Color.GREEN);
+                }
+            });
+
+        }
     }
 
 

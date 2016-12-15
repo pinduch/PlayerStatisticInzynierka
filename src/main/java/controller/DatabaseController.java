@@ -36,22 +36,7 @@ public class DatabaseController {
         return getResults(query);
     }
 
-    /**
-     * Get all results from proper track.
-     *
-     * @param trackId Id of track.
-     * @return
-     */
-    public List<Object[]> getResultsByTrack(Integer trackId){
-       String query =
-                "select p.playerName, r.result, r.date " +
-                "from Player as p " +
-                "inner join p.resultSet as r " +
-                "where r.track = " + trackId + " " +
-                "order by r.result";
 
-        return getResults(query);
-    }
 
     /**
      * Get name of all Tracks.
@@ -81,10 +66,10 @@ public class DatabaseController {
      * @param text
      * @return
      */
-    public List<Object[]> getTrackNamesContainsText(String text){
-        String query =  "select t.trackName " +
-                        "from Track as t " +
-                        "where t.trackName like '%" + text + "%'";
+    public List<Object[]> getPlayerNamesContainsText(String text){
+        String query =  "select p.playerName " +
+                        "from Player as p " +
+                        "where p.playerName like '%" + text + "%'";
         return getResults(query);
     }
 
@@ -135,7 +120,7 @@ public class DatabaseController {
 //        session.save(track);
 
         track = session.getSession().load(Track.class, 1);
-        player = session.getSession().load(Player.class, 4);
+        player = session.getSession().load(Player.class, 1);
 
         result.setDate( new Date(new Date().getTime() + (1000 * 60 * 60 * 45)));
         result.setResult(10.142f);
@@ -168,6 +153,14 @@ public class DatabaseController {
         return recordsList;
     }
 
+    /**
+     * Method to get results from database.
+     *
+     * @param query specific query which is send to database
+     * @param dateFrom parameter used in query
+     * @param dateTo parameter used in query
+     * @return
+     */
     private List<Object[]> getResults(String query, Date dateFrom, Date dateTo){
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
@@ -185,25 +178,5 @@ public class DatabaseController {
         session.getTransaction().commit();
         return recordsList;
     }
-
-//    Session session = HibernateUtil.getSessionFactory().openSession();
-//        session.beginTransaction();
-//
-//    Query query = session.createQuery("select t.trackName, r.result, r.date, p.playerName " +
-//            "from Result as r " +
-//            "inner join r.track as t " +
-//            "inner join r.player as p " +
-//            "order by t.trackName");
-//
-//    List<Object[]> recordList = query.list();
-//
-//        for (Object[] result : recordList) {
-//        System.out.print(String.valueOf(result[0]) + " - ");
-//        System.out.print(String.valueOf(result[1]) + " - ");
-//        System.out.print(String.valueOf(result[2]) + " - ");
-//        System.out.println(String.valueOf(result[3]));
-//    }
-//
-//        session.getTransaction().commit();
 
 }

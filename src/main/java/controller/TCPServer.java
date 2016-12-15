@@ -2,7 +2,6 @@ package controller;
 
 import javafx.scene.control.TextArea;
 import model.ServerModel;
-import sun.rmi.runtime.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,8 +9,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by Mateusz on 22.11.2016.
@@ -27,7 +24,6 @@ public class TCPServer extends Thread {
     private BufferedReader in;
     private ServerSocket listener;
     private Socket socket;
-    private TextArea txtArea;
     private ServerModel serverModel;
 
     private static TCPServer instance = null;
@@ -39,6 +35,9 @@ public class TCPServer extends Thread {
         return instance;
     }
 
+    /**
+     * Server constructor
+     */
     protected TCPServer(){
         serverModel = ServerModel.getInstance();
     }
@@ -70,10 +69,8 @@ public class TCPServer extends Thread {
 
             clientListenerThread();
 
-
         } catch (IOException e) {
             e.printStackTrace();
-
         }
     }
 
@@ -82,25 +79,22 @@ public class TCPServer extends Thread {
      */
     private void clientListenerThread(){
 
-        new Thread(new Runnable() {
+        new Thread(() -> {
+            while (!socket.isClosed()) {
+                try {
+                        clientResponse = in.readLine();
 
-            public void run() {
-                while (true) {
-                    try {
-                            clientResponse = in.readLine();
+                        if (clientResponse != null) {
+                            serverModel.setReceivedMessage(clientResponse);
+                        }
 
-                            if (clientResponse != null) {
-                                System.out.println(clientResponse);
-                            }
+                        if (clientResponse.equals("Application is closed")) {
+                            closeConnection();
+                            break;
+                        }
 
-                            if (clientResponse.equals("Application is closed")) {
-                                closeConnection();
-                                break;
-                            }
-
-                    } catch (IOException e){
-                        e.printStackTrace();
-                    }
+                } catch (IOException e){
+                    e.printStackTrace();
                 }
             }
         }).start();
