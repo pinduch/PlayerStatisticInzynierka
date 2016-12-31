@@ -1,6 +1,8 @@
 package controller;
 
-import javafx.beans.property.StringProperty;
+import common.Constant;
+import common.ServerRequest;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -52,7 +54,7 @@ public class MainViewController {
     public TCPServer tcpServer;
     public ServerModel serverModel;
 
-
+    public ServerRequestDispatcher serverRequestDispatcher;
     /**
      * Main constructor
      */
@@ -60,6 +62,8 @@ public class MainViewController {
         model = new MainModel();
         tcpServer = TCPServer.getInstance();
         serverModel = ServerModel.getInstance();
+        serverRequestDispatcher = new ServerRequestDispatcher();
+
     }
 
     @FXML
@@ -89,13 +93,23 @@ public class MainViewController {
 
         txtSearchPlayer.textProperty().addListener((observable, oldValue, newValue) -> model.setPlayerListContainsText(newValue));
         testTxtField.textProperty().bindBidirectional(serverModel.getReceivedMessage());
+        labelConnection.textProperty().bind(serverModel.getConnection());
 
         serverModel.getReceivedMessage().addListener((observable, oldValue, newValue) -> {
-            if (newValue.equals("connect")) {
-                labelConnection.setText("Connected");
-                labelConnection.setTextFill(Color.GREEN);
+            if (oldValue != null) {
+                if (oldValue.equals(ServerRequest.CONNECT)) {
+                    Platform.runLater(() -> serverModel.setConnection(ServerRequest.CONNECTED_DEVICE + newValue));
+                    labelConnection.setTextFill(Color.GREEN);
+                } else if (newValue.equals(ServerRequest.DISCONNECT)) {
+                    Platform.runLater(() -> serverModel.setConnection(ServerRequest.NO_CONNECTION));
+                    labelConnection.setTextFill(Color.RED);
+                    tcpServer = TCPServer.getInstance();
+                } 
             }
         });
+
+//        serverRequestDispatcher.requestDispatch();
+
 
         try {
             startServer();
@@ -139,11 +153,9 @@ public class MainViewController {
      * @throws IOException
      */
     public void startServer() throws IOException {
-
 //        tcpServer = new TCPServer(txtArea);
 //        txtMainText.setText("Try to connect to server");
         tcpServer.start();
-
     }
 
     public void sendMessage() {
@@ -151,20 +163,6 @@ public class MainViewController {
 //        tcpServer.sendMessage(txtMessage.getText());
 //        txtMessage.clear();
 
-    }
-
-    public class ServerRequestDispatcher extends Thread {
-
-        @Override
-        public void run() {
-            serverModel.getReceivedMessage().addListener((observable, oldValue, newValue) -> {
-                if (newValue.equals("connect")) {
-                    labelConnection.setText("Connected");
-                    labelConnection.setTextFill(Color.GREEN);
-                }
-            });
-
-        }
     }
 
 

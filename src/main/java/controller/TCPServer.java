@@ -1,5 +1,6 @@
 package controller;
 
+import common.ServerRequest;
 import javafx.scene.control.TextArea;
 import model.ServerModel;
 
@@ -79,26 +80,27 @@ public class TCPServer extends Thread {
      */
     private void clientListenerThread(){
 
-        new Thread(() -> {
-            while (!socket.isClosed()) {
-                try {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!socket.isClosed()) {
+                    try {
                         clientResponse = in.readLine();
 
                         if (clientResponse != null) {
                             serverModel.setReceivedMessage(clientResponse);
                         }
 
-                        if (clientResponse.equals("Application is closed")) {
+                        if (clientResponse.equals(ServerRequest.DISCONNECT)) {
                             closeConnection();
-                            break;
                         }
 
-                } catch (IOException e){
-                    e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }).start();
-
     }
 
     /**
@@ -115,10 +117,9 @@ public class TCPServer extends Thread {
      */
     public void closeConnection(){
         try {
+            if (socket != null) socket.close();
             listener.close();
-            if (socket != null) {
-                socket.close();
-            }
+            instance = null;
         } catch (IOException e) {
             e.printStackTrace();
         }

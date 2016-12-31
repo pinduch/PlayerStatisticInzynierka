@@ -16,6 +16,10 @@ public class ServerModel {
 
     private StringProperty receivedMessage;
 
+    // tymczasowo
+    private StringProperty connection;
+
+
     private static ServerModel instance = null;
 
     public static ServerModel getInstance() {
@@ -27,6 +31,7 @@ public class ServerModel {
 
     public ServerModel(){
         receivedMessage = new SimpleStringProperty();
+        connection = new SimpleStringProperty();
     }
 
     public GameState getGameState() {
@@ -53,4 +58,13 @@ public class ServerModel {
         this.receivedMessage.setValue(receivedMessage);
     }
 
+
+
+    public StringProperty getConnection() {
+        return connection;
+    }
+
+    public void setConnection(String connection) {
+        this.connection.setValue(connection);
+    }
 }
