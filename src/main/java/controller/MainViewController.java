@@ -104,7 +104,7 @@ public class MainViewController {
                     Platform.runLater(() -> serverModel.setConnection(ServerRequest.NO_CONNECTION));
                     labelConnection.setTextFill(Color.RED);
                     tcpServer = TCPServer.getInstance();
-                } 
+                }
             }
         });
 
