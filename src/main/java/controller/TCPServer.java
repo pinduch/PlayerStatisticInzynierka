@@ -1,7 +1,6 @@
 package controller;
 
 import common.ServerRequest;
-import javafx.scene.control.TextArea;
 import model.ServerModel;
 
 import java.io.BufferedReader;
@@ -20,7 +19,9 @@ import java.net.Socket;
 
 public class TCPServer extends Thread {
 
-    private String clientResponse;
+    public enum TcpConnectionState {CONNECTED, DISCONNECTED}
+
+    private String clientRequest;
     private PrintWriter out;
     private BufferedReader in;
     private ServerSocket listener;
@@ -28,6 +29,7 @@ public class TCPServer extends Thread {
     private ServerModel serverModel;
 
     private static TCPServer instance = null;
+    private TcpConnectionState tcpConnectionState;
 
     public static TCPServer getInstance(){
         if (instance == null){
@@ -41,6 +43,7 @@ public class TCPServer extends Thread {
      */
     protected TCPServer(){
         serverModel = ServerModel.getInstance();
+        tcpConnectionState = TcpConnectionState.DISCONNECTED;
     }
 
     @Override
@@ -62,7 +65,7 @@ public class TCPServer extends Thread {
         listener = new ServerSocket(9090);
         try {
             socket = listener.accept();
-
+            tcpConnectionState = TcpConnectionState.CONNECTED;
             System.out.println("CONNECTED");
 
             out = new PrintWriter(socket.getOutputStream(), true);
@@ -85,14 +88,14 @@ public class TCPServer extends Thread {
             public void run() {
                 while (!socket.isClosed()) {
                     try {
-                        clientResponse = in.readLine();
+                        clientRequest = in.readLine();
 
-                        if (clientResponse != null) {
-                            serverModel.setReceivedMessage(clientResponse);
+                        if (clientRequest.equals(ServerRequest.DISCONNECT)) {
+                            closeConnection();
                         }
 
-                        if (clientResponse.equals(ServerRequest.DISCONNECT)) {
-                            closeConnection();
+                        if (clientRequest != null) {
+                            serverModel.setReceivedMessage(clientRequest);
                         }
 
                     } catch (IOException e) {
@@ -118,12 +121,24 @@ public class TCPServer extends Thread {
     public void closeConnection(){
         try {
             if (socket != null) socket.close();
-            listener.close();
+            if (listener != null) listener.close();
             instance = null;
+            tcpConnectionState = TcpConnectionState.DISCONNECTED;
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Method to check if some device is connected to server.
+     *
+     * @return
+     */
+    public boolean isDeviceConnected(){
+        if ( tcpConnectionState.equals(TcpConnectionState.CONNECTED) )
+            return true;
+        else
+            return false;
+    }
 
 }

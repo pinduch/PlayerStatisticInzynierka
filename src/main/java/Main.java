@@ -2,6 +2,7 @@
  * Created by Mateusz on 14.11.2016.
  */
 
+import common.ServerRequest;
 import controller.TCPServer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -40,6 +41,7 @@ public class Main extends Application {
 
     private void closeOpenedConnections(){
         HibernateUtil.shutdown();
+        if ( TCPServer.getInstance().isDeviceConnected() ) TCPServer.getInstance().sendMessage(ServerRequest.SERVER_SHUTDOWN);
         TCPServer.getInstance().closeConnection();
     }
 }

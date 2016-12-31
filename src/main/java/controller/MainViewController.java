@@ -60,10 +60,9 @@ public class MainViewController {
      */
     public MainViewController() {
         model = new MainModel();
-        tcpServer = TCPServer.getInstance();
         serverModel = ServerModel.getInstance();
         serverRequestDispatcher = new ServerRequestDispatcher();
-
+        startServer();
     }
 
     @FXML
@@ -103,19 +102,13 @@ public class MainViewController {
                 } else if (newValue.equals(ServerRequest.DISCONNECT)) {
                     Platform.runLater(() -> serverModel.setConnection(ServerRequest.NO_CONNECTION));
                     labelConnection.setTextFill(Color.RED);
-                    tcpServer = TCPServer.getInstance();
+                    startServer();
                 }
             }
         });
 
 //        serverRequestDispatcher.requestDispatch();
 
-
-        try {
-            startServer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -132,6 +125,8 @@ public class MainViewController {
         if (cmbTrackNames.getSelectionModel().getSelectedIndex() == 0) trackName = "";
 
         model.setTableRankDataFromSearchCriteria(playerName, trackName,dateFrom, dateTo);
+
+        tcpServer.sendMessage("OK");
     }
 
     /**
@@ -150,11 +145,11 @@ public class MainViewController {
 
     /**
      * Method to start server TCP
-     * @throws IOException
      */
-    public void startServer() throws IOException {
+    public void startServer() {
 //        tcpServer = new TCPServer(txtArea);
 //        txtMainText.setText("Try to connect to server");
+        tcpServer = TCPServer.getInstance();
         tcpServer.start();
     }
 
