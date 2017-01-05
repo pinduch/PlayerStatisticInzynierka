@@ -3,6 +3,7 @@ package controller;
 import common.Constant;
 import common.ServerRequest;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -12,7 +13,9 @@ import model.ServerModel;
 import model.TableRankData;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 /**
  * Created by Mateusz on 14.11.2016.
@@ -53,6 +56,7 @@ public class MainViewController {
 
     public TCPServer tcpServer;
     public ServerModel serverModel;
+    public DatabaseController database;
 
     public ServerRequestDispatcher serverRequestDispatcher;
     /**
@@ -62,12 +66,13 @@ public class MainViewController {
         model = new MainModel();
         serverModel = ServerModel.getInstance();
         serverRequestDispatcher = new ServerRequestDispatcher();
-        startServer();
+        database = new DatabaseController();
     }
 
     @FXML
     private void initialize()
     {
+        ServerRequest.fieldsValue().forEach(System.out::println);
 
         tblId.setCellValueFactory(new PropertyValueFactory<TableRankData, String>("id"));
         tblId.prefWidthProperty().bind(tblRankData.widthProperty().multiply(0.10));
@@ -94,21 +99,35 @@ public class MainViewController {
         testTxtField.textProperty().bindBidirectional(serverModel.getReceivedMessage());
         labelConnection.textProperty().bind(serverModel.getConnection());
 
-        serverModel.getReceivedMessage().addListener((observable, oldValue, newValue) -> {
-            if (oldValue != null) {
-                if (oldValue.equals(ServerRequest.CONNECT)) {
-                    Platform.runLater(() -> serverModel.setConnection(ServerRequest.CONNECTED_DEVICE + newValue));
-                    labelConnection.setTextFill(Color.GREEN);
-                } else if (newValue.equals(ServerRequest.DISCONNECT)) {
-                    Platform.runLater(() -> serverModel.setConnection(ServerRequest.NO_CONNECTION));
-                    labelConnection.setTextFill(Color.RED);
-                    startServer();
-                }
-            }
-        });
+        serverModel.getReceivedMessage().addListener(
+                (observable, oldValue, newValue) -> serverRequestDispatcherListener(oldValue,newValue));
+//            if (ServerRequest.fieldsValue().contains(oldValue)) {
+//                serverRequestDispatcher.requestDispatch(oldValue, newValue);
+//            }
+//            if (newValue.equals(ServerRequest.DISCONNECT)){
+//                serverRequestDispatcher.requestDispatch(newValue, null);
+//                startServer();
+//            }
+//            if (oldValue != null) {
+//
+//                //TODO pomysł -> oldValue to bedzie to co mam zrobic w newValue przesle w jednym stringu wszystko co chce
+//
+//                if (oldValue.equals(ServerRequest.CONNECT)) {
+//                    Platform.runLater(() -> serverModel.setConnection(ServerRequest.CONNECTED_DEVICE + newValue));
+//                    labelConnection.setTextFill(Color.GREEN);
+//                } else if (newValue.equals(ServerRequest.DISCONNECT)) {
+//                    Platform.runLater(() -> serverModel.setConnection(ServerRequest.NO_CONNECTION));
+//                    labelConnection.setTextFill(Color.RED);
+//                    startServer();
+//                } else {
+//                    serverRequestDispatcher.requestDispatch(newValue, newValue);
+//                }
+//            }
+//        });
 
 //        serverRequestDispatcher.requestDispatch();
 
+        startServer();
     }
 
 
@@ -126,7 +145,6 @@ public class MainViewController {
 
         model.setTableRankDataFromSearchCriteria(playerName, trackName,dateFrom, dateTo);
 
-        tcpServer.sendMessage("OK");
     }
 
     /**
@@ -158,6 +176,42 @@ public class MainViewController {
 //        tcpServer.sendMessage(txtMessage.getText());
 //        txtMessage.clear();
 
+    }
+
+    private void serverRequestDispatcherListener(String oldValue, String newValue){
+
+        if (ServerRequest.fieldsValue().contains(newValue)){
+            switch (newValue){
+                case ServerRequest.DISCONNECT:
+                    Platform.runLater(() -> serverModel.setConnection(ServerRequest.NO_CONNECTION));
+                    labelConnection.setTextFill(Color.RED);
+                    startServer();
+                    break;
+            }
+        }
+
+        if (ServerRequest.fieldsValue().contains(oldValue)){
+            switch (oldValue){
+                case ServerRequest.CONNECT:
+                    Platform.runLater(() -> serverModel.setConnection(ServerRequest.CONNECTED_DEVICE + newValue));
+                    labelConnection.setTextFill(Color.GREEN);
+                    break;
+                case ServerRequest.CHECK_USERNAME:
+                    if (database.checkUsernameExist(newValue)) tcpServer.sendMessage(ServerRequest.TRUE);
+                    else tcpServer.sendMessage(ServerRequest.FALSE);
+                    break;
+            }
+
+
+        }
+
+//        if (ServerRequest.fieldsValue().contains(oldValue)) {
+//            serverRequestDispatcher.requestDispatch(oldValue, newValue);
+//        }
+//        if (newValue.equals(ServerRequest.DISCONNECT)){
+//            serverRequestDispatcher.requestDispatch(newValue, null);
+//            startServer();
+//        }
     }
 
 

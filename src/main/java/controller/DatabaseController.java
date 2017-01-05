@@ -73,7 +73,14 @@ public class DatabaseController {
         return getResults(query);
     }
 
-    // TODO okiełznać jeszcze date do tej metody.
+    public boolean checkUsernameExist(String username){
+        String query = "select p.playerName " +
+                       "from Player as p " +
+                       "where p.playerName = '" + username + "'";
+        if (getResults(query).isEmpty()) return false;
+            else return true;
+    }
+
     public List<Object[]> getResultsFromSearchCriteria(String playerName, String trackName, LocalDate dateFrom, LocalDate dateTo){
         Date dateFromParameter = null;
         Date dateToParameter = null;

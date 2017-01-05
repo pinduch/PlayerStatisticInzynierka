@@ -100,6 +100,8 @@ public class TCPServer extends Thread {
 
                     } catch (IOException e) {
                         e.printStackTrace();
+                    } catch (NullPointerException nullPointerException){
+
                     }
                 }
             }

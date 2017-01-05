@@ -2,23 +2,19 @@ package model;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.paint.Color;
+
+import java.util.Observable;
 
 /**
  * Created by Mateusz on 11.12.2016.
  */
 public class ServerModel {
 
-    public enum DeviceConnection {CONNECTED, DISCONNECTED}
-    public enum GameState {START, STOP}
-
-    private GameState gameState;
-    private DeviceConnection deviceConnection;
-
     private StringProperty receivedMessage;
-
-    // tymczasowo
     private StringProperty connection;
-
 
     private static ServerModel instance = null;
 
@@ -34,22 +30,6 @@ public class ServerModel {
         connection = new SimpleStringProperty();
     }
 
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
-    }
-
-    public DeviceConnection getDeviceConnection() {
-        return deviceConnection;
-    }
-
-    public void setDeviceConnection(DeviceConnection deviceConnection) {
-        this.deviceConnection = deviceConnection;
-    }
-
     public StringProperty getReceivedMessage() {
         return receivedMessage;
     }
@@ -58,8 +38,6 @@ public class ServerModel {
         this.receivedMessage.setValue(receivedMessage);
     }
 
-
-
     public StringProperty getConnection() {
         return connection;
     }
@@ -67,4 +45,5 @@ public class ServerModel {
     public void setConnection(String connection) {
         this.connection.setValue(connection);
     }
+
 }
