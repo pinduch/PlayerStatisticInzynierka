@@ -1,0 +1,116 @@
+.text-field{
+    -fx-base: #4378ff;
+    -fx-background-color: #a4ddff;
+    -fx-border-color: #0003bb;
+    -fx-border-width: 2;
+    -fx-font-family: "Comic Sans MS";
+}
+
+.combo-box-base{
+    -fx-base: #4378ff;
+    -fx-background-color: #a4ddff;
+    -fx-border-color: #0003bb;
+    -fx-border-width: 2;
+    -fx-font-family: "Comic Sans MS";
+}
+
+#actual-player-label{
+    -fx-base: #4378ff;
+    -fx-background-color: #a4ddff;
+    -fx-border-color: #0003bb;
+    -fx-border-width: 2;
+    -fx-font-family: "Comic Sans MS";
+}
+
+
+.dialog-pane {
+    -fx-background-color: #a4ddff;
+    -fx-font-family: "Comic Sans MS";
+    -fx-font-size: 17px;
+    -fx-border-color: #ff2200;
+    -fx-border-width: 3;
+}
+
+.dialog-pane > .content.label {
+    -fx-padding: 30 10 30 10;
+    -fx-background-color: #a4ddff;
+    -fx-text-fill:black;
+    -fx-font-size:17px;
+}
+
+.dialog-pane .header-panel{
+    -fx-background-color: #0003bb;
+    -fx-font-size: 25px;
+}
+
+.dialog-pane .header-panel .label{
+    -fx-text-fill: white;
+}
+
+
+
+.list-view {
+    -fx-base: #4378ff;
+    -fx-control-inner-background: #a4ddff;
+    -fx-background-color: #a4ddff;
+    -fx-border-color: #0003bb;
+    -fx-border-width: 0 2 2 2;
+    -fx-font-family: "Comic Sans MS";
+}
+
+.table-view {
+    -fx-base: #4378ff;
+    -fx-control-inner-background: #a4ddff;
+    -fx-background-color: #a4ddff;
+    -fx-table-cell-border-color: transparent;
+    -fx-table-header-border-color: transparent;
+    -fx-border-color: #0003bb;
+    -fx-border-width: 2;
+}
+
+.table-row-cell{
+    -fx-font-size: 15pt;
+    -fx-font-family: "Comic Sans MS";
+
+}
+
+.table-row-cell:filled:selected {
+    -fx-background: -fx-control-inner-background ;
+    -fx-background-color: -fx-table-cell-border-color, -fx-background ;
+    -fx-table-cell-border-color: transparent;
+
+}
+
+.table-row-cell:odd:filled:selected {
+    -fx-background: -fx-control-inner-background-alt ;
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 18pt;
+    -fx-font-family: "Comic Sans MS";
+    -fx-alignment: center;
+}
+
+
+
+
+.button {
+    -fx-background-color:
+            linear-gradient(#00c6ff, #0003bb),
+            linear-gradient(#95d6ff 0%, #00a6df 50%, #0003bb 100%),
+            linear-gradient(from 0% 0% to 15% 50%, rgba(255,255,255,0.9), rgba(255,255,255,0));
+    -fx-background-radius: 5;
+    -fx-background-insets: 0,1,2,3,0;
+    -fx-text-fill: #000000;
+    -fx-font-weight: bold;
+    -fx-font-size: 17px;
+    -fx-font-family: "Comic Sans MS";
+}
+
+
+.button:pressed, .button:default:hover:pressed {
+    -fx-background-color:
+            linear-gradient(#00c6ff, #0003bb),
+            linear-gradient(#0003bb 0%, #00a6df 50%, #95d6ff 100%),
+            linear-gradient(from 100% 100% to 85% 50%, rgba(255,255,255,0.9), rgba(255,255,255,0));
+}

@@ -28,7 +28,7 @@ public class DatabaseController {
      * @return
      */
     public List<Object[]> getAllResults(){
-        String query = "select p.playerName, r.result, r.date " +
+        String query = "select p.playerName, r.result " +
                 "from Player as p " +
                 "inner join p.resultSet as r " +
                 "order by r.result";
@@ -81,56 +81,36 @@ public class DatabaseController {
             else return true;
     }
 
-    public List<Object[]> getResultsFromSearchCriteria(String playerName, String trackName, LocalDate dateFrom, LocalDate dateTo){
-        Date dateFromParameter = null;
-        Date dateToParameter = null;
-
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            if (dateFrom != null)
-                dateFromParameter = format.parse(dateFrom + " 00:00:00");
-            if (dateTo != null)
-                dateToParameter = format.parse(dateTo + " 23:59:59");
-        } catch (ParseException ex){
-            ex.printStackTrace();
-        }
-
-        String query =  "select p.playerName, r.result, r.date " +
-                        "from Result as r " +
-                        "inner join r.track as t " +
-                        "inner join r.player as p " +
-                        "where p.playerName like '%" + playerName + "%' " +
-                        "and t.trackName like '%" + trackName + "%' ";
-        if (dateFrom != null) {
-            query += "and r.date > :" + Constant.DATE_FROM + " ";
-        }
-        if (dateTo != null) {
-            query += "and r.date < :" + Constant.DATE_TO + " ";
-        }
-            query += "order by r.result";
-
-        return getResults(query, dateFromParameter, dateToParameter);
+    public List<Object[]> getResultsFromSearchCriteria(String playerName, String trackName){
+        String query =  "select p.playerName, r.result " +
+                "from Result as r " +
+                "inner join r.track as t " +
+                "inner join r.player as p " +
+                "where p.playerName like '%" + playerName + "%' " +
+                "and t.trackName like '%" + trackName + "%' " +
+                "order by r.result";
+        return getResults(query);
     }
 
-    public void putDataToDB(){
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        session.beginTransaction();
+    public void saveResult(String playerName, Long playerResult){
 
         Player player = new Player();
         Result result = new Result();
         Track track = new Track();
 
-//        player.setPlayerName("Artur");
-//        session.save(player);
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
 
-//        track.setTrackName("Hard");
-//        session.save(track);
+        if ( checkUsernameExist(playerName) ){
+            player = session.getSession().load(Player.class, getPlayerNames().indexOf(playerName));
+        } else {
+            player.setPlayerName(playerName);
+            session.save(player);
+        }
 
         track = session.getSession().load(Track.class, 1);
-        player = session.getSession().load(Player.class, 1);
 
-        result.setDate( new Date(new Date().getTime() + (1000 * 60 * 60 * 45)));
-        result.setResult(10.142f);
+        result.setResult(playerResult);
         result.setPlayer(player);
         result.setTrack(track);
 
@@ -138,8 +118,8 @@ public class DatabaseController {
         track.getResultSet().add(result);
 
         session.save(result);
-        session.getTransaction().commit();
 
+        session.getTransaction().commit();
         session.close();
     }
 

@@ -2,6 +2,8 @@ package model;
 
 import common.Constant;
 import controller.DatabaseController;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -13,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -26,6 +29,8 @@ public class MainModel {
     private ObservableList<String> lstPlayerList;
     private ObservableList<TableRankData> tableRankDataList;
     private String ipAddress;
+    private String actualUsername;
+    private StringProperty resultPlayerTime;
 
     public MainModel() {
         database = new DatabaseController();
@@ -38,6 +43,9 @@ public class MainModel {
         setPlayerList();
         setIpAddress();
         setTableRankData();
+
+        resultPlayerTime = new SimpleStringProperty();
+        setResultPlayerTime(Constant.START_LABEL_RESULT);
     }
 
 
@@ -73,27 +81,26 @@ public class MainModel {
         this.ipAddress = ipAddress;
     }
 
-    public void setTableRankDataFromSearchCriteria(String playerName, String trackName, LocalDate dateFrom, LocalDate dateTo){
-        setTableRankData(database.getResultsFromSearchCriteria(playerName, trackName, dateFrom, dateTo));
+    public void setTableRankDataFromSearchCriteria(String playerName, String trackName){
+        setTableRankData(database.getResultsFromSearchCriteria(playerName, trackName));
     }
 
-    /**
-     * Method to change date format which is show in rank table
-     *
-     * @param oldDate date in String
-     * @param dateFormat new date format
-     * @return
-     */
-    public String changeDate(String oldDate, String dateFormat){
-        String newDate = null;
-        try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(oldDate);
-            newDate = new SimpleDateFormat(dateFormat).format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return newDate;
+    public StringProperty resultPlayerTimeProperty() {
+        return resultPlayerTime;
     }
+
+    public void setResultPlayerTime(String resultPlayerTime) {
+        this.resultPlayerTime.set(resultPlayerTime);
+    }
+
+    public String getActualUsername() {
+        return actualUsername;
+    }
+
+    public void setActualUsername(String actualUsername) {
+        this.actualUsername = actualUsername;
+    }
+
 
     public void setPlayerListContainsText(String text){
         lstPlayerList.clear();
@@ -101,6 +108,11 @@ public class MainModel {
         for (Object result : database.getPlayerNamesContainsText(text)){
             lstPlayerList.add(String.valueOf(result));
         }
+    }
+
+    public void refreshPlayerList(){
+        lstPlayerList.clear();
+        setPlayerList();
     }
 
     private void setTrackCombo() {
@@ -136,11 +148,22 @@ public class MainModel {
             TableRankData tableRankData = new TableRankData(
                     i.toString(),
                     String.valueOf(result[0]),
-                    String.valueOf(result[1]),
-                    changeDate(String.valueOf(result[2]), "HH:mm \ndd.MM.yy")
+                    convertStringMillisToResult(String.valueOf(result[1]))
             );
             tableRankDataList.add(tableRankData);
             i++;
         }
+    }
+
+    private String convertStringMillisToResult(String value){
+        String result;
+
+        long min = TimeUnit.MILLISECONDS.toMinutes(Long.valueOf(value));
+        long sec = TimeUnit.MILLISECONDS.toSeconds(Long.valueOf(value)) - TimeUnit.MINUTES.toSeconds(min);
+        long millis = Long.valueOf(value) - TimeUnit.MINUTES.toMillis(min) - TimeUnit.SECONDS.toMillis(sec);
+
+        result = String.format("%02d.%02d.%03d", min, sec, millis);
+
+        return result;
     }
 }

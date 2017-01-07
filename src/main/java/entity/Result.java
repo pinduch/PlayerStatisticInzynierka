@@ -13,8 +13,7 @@ import java.util.Date;
 public class Result implements Serializable {
 
     private Integer id;
-    private Date date;
-    private Float result;
+    private Long result;
     private Track track;
     private Player player;
 
@@ -35,21 +34,12 @@ public class Result implements Serializable {
         this.id = id;
     }
 
-    @Column(name = "DATE")
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
     @Column(name = "RESULT")
-    public Float getResult() {
+    public Long getResult() {
         return result;
     }
 
-    public void setResult(Float result) {
+    public void setResult(Long result) {
         this.result = result;
     }
 

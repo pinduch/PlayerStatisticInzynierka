@@ -8,16 +8,15 @@ public class TableRankData {
     private String id;
     private String name;
     private String result;
-    private String date;
+//    private String date;
 
     public TableRankData(){
     }
 
-    public TableRankData(String id, String name, String result, String date){
+    public TableRankData(String id, String name, String result){
         this.id = id;
         this.name = name;
         this.result = result;
-        this.date = date;
     }
 
     public String getId() {
@@ -42,13 +41,5 @@ public class TableRankData {
 
     public void setResult(String result) {
         this.result = result;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 }

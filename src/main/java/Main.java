@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import utils.HibernateUtil;
 
 import java.io.IOException;
+import java.util.TimerTask;
 
 public class Main extends Application {
 
@@ -32,6 +33,7 @@ public class Main extends Application {
         loader.setLocation(Main.class.getResource("test.fxml"));
         mainPane = loader.load();
         Scene scene = new Scene(mainPane);
+        scene.getStylesheets().add("myStylesheet.css");
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -43,5 +45,6 @@ public class Main extends Application {
         HibernateUtil.shutdown();
         if ( TCPServer.getInstance().isDeviceConnected() ) TCPServer.getInstance().sendMessage(ServerRequest.SERVER_SHUTDOWN);
         TCPServer.getInstance().closeConnection();
+
     }
 }
