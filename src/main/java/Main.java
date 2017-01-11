@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 import utils.HibernateUtil;
 
 import java.io.IOException;
-import java.util.TimerTask;
 
 public class Main extends Application {
 
@@ -30,7 +29,7 @@ public class Main extends Application {
         this.primaryStage.setTitle("Ollie Player Statistics");
 
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(Main.class.getResource("test.fxml"));
+        loader.setLocation(Main.class.getResource("scene.fxml"));
         mainPane = loader.load();
         Scene scene = new Scene(mainPane);
         scene.getStylesheets().add("myStylesheet.css");

@@ -51,7 +51,6 @@ public class MainViewController {
     public ServerModel serverModel;
     public DatabaseController database;
 
-    public ServerRequestDispatcher serverRequestDispatcher;
 
     private long startTime = 0L;
     private long elapsedTimeInMilliseconds = 0L;
@@ -65,7 +64,6 @@ public class MainViewController {
     public MainViewController() {
         model = new MainModel();
         serverModel = ServerModel.getInstance();
-        serverRequestDispatcher = new ServerRequestDispatcher();
         database = new DatabaseController();
     }
 
